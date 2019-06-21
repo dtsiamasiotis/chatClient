@@ -1,7 +1,7 @@
 <!doctype html>
 <html ng-app='ChatClient' lang="en">
   <head>
-    <title>Lunch Checker</title>
+    <title>Chat</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="styles/bootstrap.min.css">
     <style>
@@ -18,18 +18,28 @@
     <input id="nickName" type="text"
            ng-model="clientName">
     <button ng-click="chatController.setClientName(clientName)" class="btn btn-default">Connect</button>
+
+    {{statusOfClient}}
+
 </div>
-         <div  class="form-group">
-             <textarea
+
+         <div>
+             <textarea rows="8"
              class="form-control"
              ng-model="chatMessages"></textarea>
+             <select size="8" ng-model="users">
+                 <option ng-selected="false" ng-repeat="u in chatController.onlineUsers">{{u.value}}</option>
+             </select>
          </div>
+
          <div class="form-group">
              <input id="messageToSend" type="text"
                     placeholder="message"
                     class="form-control"
-                    ng-model="message">
+                    ng-model="message"
+             ng-disabled="statusOfClient===''">
              <button ng-click="chatController.sendMessage(message)" class="btn btn-default">Send</button>
+
          </div>
 
    </div>

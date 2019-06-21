@@ -10,8 +10,10 @@
         this.socket = new WebSocket("ws://localhost:8080/chatServer-1.0-SNAPSHOT/actions");
         var ctrl = this;
         $scope.chatMessages = '';
+        $scope.statusOfClient = '';
         ctrl.clientName = $scope.clientName;
-        //ctrl.chatMessages = $scope.chatMessages;
+        ctrl.onlineUsers = [{id:1,value:'client1'}];
+
 
         ctrl.sendMessage = function (message) {
             console.log(message);
@@ -30,7 +32,13 @@
         };
 
         ctrl.setClientName = function (clientName) {
-            ctrl.clientName = clientName;
+            if(clientName) {
+                ctrl.clientName = clientName;
+                $scope.statusOfClient = "Connected!"
+                //onlineUsers.push(ctrl.clientName);
+            }
+            else
+                $scope.statusOfClient = "Please enter a nickname first!";
         }
     }
 
