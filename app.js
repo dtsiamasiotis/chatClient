@@ -12,16 +12,26 @@
         $scope.chatMessages = '';
         $scope.statusOfClient = '';
         ctrl.clientName = $scope.clientName;
-        ctrl.onlineUsers = [{id:1,value:'client1'}];
+        $scope.onlineUsers = [];
 
 
         ctrl.sendMessage = function (message) {
-            console.log(message);
             ctrl.socket.send(ctrl.clientName + ":" + message);
         };
 
 
         ctrl.socket.onmessage = function (evt) {
+            try {
+                var objects = JSON.parse(evt.data);
+                $scope.onlineUsers=[];
+                objects.forEach(function (key, index) {
+                    console.log(key.sessionId);
+                    console.log(key.nickName);
+                    $scope.onlineUsers.push(key);
+                    $scope.$apply();
+                });
+                return;
+            }catch(err){}
             ctrl.populateChatMessages(evt.data);
         };
 
@@ -34,8 +44,8 @@
         ctrl.setClientName = function (clientName) {
             if(clientName) {
                 ctrl.clientName = clientName;
-                $scope.statusOfClient = "Connected!"
-                //onlineUsers.push(ctrl.clientName);
+                $scope.statusOfClient = "Connected!";
+                ctrl.socket.send("setNickName:"+ctrl.clientName);
             }
             else
                 $scope.statusOfClient = "Please enter a nickname first!";

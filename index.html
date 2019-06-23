@@ -11,38 +11,56 @@
       <script src="app.js"></script>
   </head>
 <body>
+<form>
    <div ng-controller='ChatClientController as chatController' class="container">
 
 <div>
-    Enter nickname:
+    <div class="form-row">
+        <div class="form-group col-md-6">
+        <label for="nickName">Enter nickname:</label>
+
     <input id="nickName" type="text"
            ng-model="clientName">
+        </div>
+        <div class="form-group col-md-6">
     <button ng-click="chatController.setClientName(clientName)" class="btn btn-default">Connect</button>
 
     {{statusOfClient}}
-
+        </div>
+    </div>
 </div>
 
-         <div>
+         <div class="form-row">
+             <div class="form-group col-md-8">
              <textarea rows="8"
              class="form-control"
              ng-model="chatMessages"></textarea>
-             <select size="8" ng-model="users">
-                 <option ng-selected="false" ng-repeat="u in chatController.onlineUsers">{{u.value}}</option>
+                 </div>
+             <div class="form-group col-md-4">
+             <select size="8" ng-model="users" ng-options="u.nickName for u in onlineUsers">
+                 <option value="" selected hidden/>
              </select>
+             </div>
          </div>
 
-         <div class="form-group">
+       <div class="form-row">
+         <div class="form-group col-md-12">
              <input id="messageToSend" type="text"
                     placeholder="message"
                     class="form-control"
                     ng-model="message"
              ng-disabled="statusOfClient===''">
-             <button ng-click="chatController.sendMessage(message)" class="btn btn-default">Send</button>
-
          </div>
+
+           <div class="form-row">
+               <div class="col-md-10">
+                    <button ng-click="chatController.sendMessage(message)" class="btn btn-default">Send</button>
+               </div>
+           </div>
+
 
    </div>
 
+</form>
 </body>
 </html>
