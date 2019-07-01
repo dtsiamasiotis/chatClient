@@ -1,7 +1,7 @@
 (function(){
     'use strict';
 
-    angular.module('ChatClient',[])
+    angular.module('ChatClient',['ui.bootstrap'])
         .controller('ChatClientController',ChatClientController);
 
     ChatClientController.$inject = ['$scope'];
@@ -13,6 +13,10 @@
         $scope.statusOfClient = '';
         ctrl.clientName = $scope.clientName;
         $scope.onlineUsers = [];
+        ctrl.tabs = [
+            { title:'Main', chatMessages:'' },
+            { title:'Dynamic Title 2', chatMessages:'' }
+        ];
 
 
         ctrl.sendMessage = function (message) {
@@ -49,6 +53,16 @@
             }
             else
                 $scope.statusOfClient = "Please enter a nickname first!";
+        }
+
+        ctrl.addPrivateChat = function(title){
+            var newTab = {title:title, chatMessages:''};
+            ctrl.tabs.push(newTab);
+        }
+
+        ctrl.selectForPrivate = function(){
+            //ctrl.addPrivateChat($scope.selectedUser);
+            console.log($scope.users+"private");
         }
     }
 
