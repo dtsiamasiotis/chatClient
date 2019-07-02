@@ -13,9 +13,9 @@
         $scope.statusOfClient = '';
         ctrl.clientName = $scope.clientName;
         $scope.onlineUsers = [];
+        ctrl.activeTabIndex = 0;
         ctrl.tabs = [
-            { title:'Main', chatMessages:'' },
-            { title:'Dynamic Title 2', chatMessages:'' }
+            { title:'Main', chatMessages:'' }
         ];
 
 
@@ -58,11 +58,15 @@
         ctrl.addPrivateChat = function(title){
             var newTab = {title:title, chatMessages:''};
             ctrl.tabs.push(newTab);
+
         }
 
         ctrl.selectForPrivate = function(){
-            //ctrl.addPrivateChat($scope.selectedUser);
-            console.log($scope.users+"private");
+            ctrl.addPrivateChat($scope.users.nickName);
+        }
+
+        ctrl.setActiveTab = function(index){
+            ctrl.activeTabIndex = index;
         }
     }
 

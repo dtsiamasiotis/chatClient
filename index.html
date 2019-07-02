@@ -34,7 +34,7 @@
         <div class="form-row">
              <div class="form-group col-md-8">
                  <uib-tabset active="active">
-                     <uib-tab index="$index+1" ng-repeat="tab in chatController.tabs" heading="{{tab.title}}" disable="tab.disabled">
+                     <uib-tab index="$index+1" ng-repeat="tab in chatController.tabs" heading="{{tab.title}}" disable="tab.disabled" select="chatController.setActiveTab($index)">
                          <textarea rows="8"
                                    class="form-control"
                                    ng-model="tab.chatMessages"></textarea>
