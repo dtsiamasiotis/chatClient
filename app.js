@@ -20,6 +20,7 @@
 
 
         ctrl.sendMessage = function (message) {
+            ctrl.addMessageToTextarea(message);
             var jsonMessage = ctrl.buildJsonMessage(message,"sendMessage");
             ctrl.socket.send(jsonMessage);
         };
@@ -28,16 +29,14 @@
         ctrl.socket.onmessage = function (evt) {
             try {
                 var jsonObject = JSON.parse(evt.data);
-                $scope.onlineUsers=[];
-                //Object.keys(jsonObject).forEach(function (key) {
+
                     if(jsonObject["operation"]==="listOfClients")
                     {
-                        console.log("here");
+                        $scope.onlineUsers=[];
                         var listOfClients = JSON.parse(jsonObject["content"]);
 
                         listOfClients.forEach(function(key, index){
                             $scope.onlineUsers.push(key);
-                            console.log($scope.onlineUsers);
                         });
 
                         $scope.$apply();
@@ -45,25 +44,46 @@
                     else if(jsonObject["operation"]==="sendMessage")
                     {
                         var sender = jsonObject["sender"];
-                        console.log(sender);
-                        ctrl.populateChatMessages(sender,jsonObject["content"]);
+                        var destination = jsonObject["destination"];
+                        var content = jsonObject["content"]
+                        console.log(jsonObject);
+                        ctrl.populateChatMessages(sender,destination,content);
+                        console.log(ctrl.tabs);
                     }
-              //  });
+
                 return;
             }catch(err){}
 
         };
 
-        ctrl.populateChatMessages = function (sender,incomingMessage){
-            tabs.forEach(function (key) {
-                if(key.title===sender) {
-                    key.chatMessages = key.chatMessages + incomingMessage + '\n';
-                    $scope.$apply();
-                }
+        ctrl.populateChatMessages = function (sender,destination,incomingMessage){
+            var foundTab = false;
 
-            });
-         //  $scope.chatMessages = $scope.chatMessages + incomingMessage + '\n';
-         //  $scope.$apply();
+            if(destination=="Main")
+            {
+                ctrl.tabs[0].chatMessages = ctrl.tabs[0].chatMessages + sender + ":" + incomingMessage + '\n';
+                $scope.$apply();
+            }
+            else {
+                ctrl.tabs.forEach(function (key) {
+                    if (key.title === sender) {
+                        key.chatMessages = key.chatMessages + sender + ":" + incomingMessage + '\n';
+                        console.log("vrike");
+                        foundTab = true;
+                        $scope.$apply();
+                    }
+
+                });
+            }
+            console.log(foundTab);
+            if(!foundTab)
+            {
+                console.log("mpike");
+                ctrl.initiatePrivateChat(sender,incomingMessage);
+                console.log(ctrl.tabs);
+                $scope.$apply();
+            }
+
         };
 
         ctrl.setClientName = function (clientName) {
@@ -83,6 +103,12 @@
 
         }
 
+        ctrl.initiatePrivateChat = function(title,message){
+            var newTab = {title:title, chatMessages:title + ":" + message + '\n'};
+            console.log(newTab);
+            ctrl.tabs.push(newTab);
+        }
+
         ctrl.selectForPrivate = function(){
             ctrl.addPrivateChat($scope.users.nickName);
         }
@@ -96,8 +122,12 @@
             var destination = ctrl.tabs[ctrl.activeTabIndex].title;
             var content = message;
             var jsonMessage = JSON.stringify(messageObj);
-            console.log(jsonMessage);
+
             return jsonMessage;
+        }
+
+        ctrl.addMessageToTextarea = function (message){
+            ctrl.tabs[ctrl.activeTabIndex].chatMessages = ctrl.tabs[ctrl.activeTabIndex].chatMessages + ctrl.clientName + ":" + message + '\n';
         }
     }
 
