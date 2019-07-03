@@ -20,36 +20,58 @@
 
 
         ctrl.sendMessage = function (message) {
-            ctrl.socket.send(ctrl.clientName + ":" + message);
+            var jsonMessage = ctrl.buildJsonMessage(message,"sendMessage");
+            ctrl.socket.send(jsonMessage);
         };
 
 
         ctrl.socket.onmessage = function (evt) {
             try {
-                var objects = JSON.parse(evt.data);
+                var jsonObject = JSON.parse(evt.data);
                 $scope.onlineUsers=[];
-                objects.forEach(function (key, index) {
-                    console.log(key.sessionId);
-                    console.log(key.nickName);
-                    $scope.onlineUsers.push(key);
-                    $scope.$apply();
-                });
+                //Object.keys(jsonObject).forEach(function (key) {
+                    if(jsonObject["operation"]==="listOfClients")
+                    {
+                        console.log("here");
+                        var listOfClients = JSON.parse(jsonObject["content"]);
+
+                        listOfClients.forEach(function(key, index){
+                            $scope.onlineUsers.push(key);
+                            console.log($scope.onlineUsers);
+                        });
+
+                        $scope.$apply();
+                    }
+                    else if(jsonObject["operation"]==="sendMessage")
+                    {
+                        var sender = jsonObject["sender"];
+                        console.log(sender);
+                        ctrl.populateChatMessages(sender,jsonObject["content"]);
+                    }
+              //  });
                 return;
             }catch(err){}
-            ctrl.populateChatMessages(evt.data);
+
         };
 
-        ctrl.populateChatMessages = function (incomingMessage){
+        ctrl.populateChatMessages = function (sender,incomingMessage){
+            tabs.forEach(function (key) {
+                if(key.title===sender) {
+                    key.chatMessages = key.chatMessages + incomingMessage + '\n';
+                    $scope.$apply();
+                }
 
-           $scope.chatMessages = $scope.chatMessages + incomingMessage + '\n';
-           $scope.$apply();
+            });
+         //  $scope.chatMessages = $scope.chatMessages + incomingMessage + '\n';
+         //  $scope.$apply();
         };
 
         ctrl.setClientName = function (clientName) {
             if(clientName) {
                 ctrl.clientName = clientName;
                 $scope.statusOfClient = "Connected!";
-                ctrl.socket.send("setNickName:"+ctrl.clientName);
+                var jsonMessage = ctrl.buildJsonMessage(ctrl.clientName,"setNickname");
+                ctrl.socket.send(jsonMessage);
             }
             else
                 $scope.statusOfClient = "Please enter a nickname first!";
@@ -67,6 +89,15 @@
 
         ctrl.setActiveTab = function(index){
             ctrl.activeTabIndex = index;
+        }
+
+        ctrl.buildJsonMessage = function(message,operation){
+            var messageObj = {sender:"",destination:ctrl.tabs[ctrl.activeTabIndex].title,content:message,operation:operation};
+            var destination = ctrl.tabs[ctrl.activeTabIndex].title;
+            var content = message;
+            var jsonMessage = JSON.stringify(messageObj);
+            console.log(jsonMessage);
+            return jsonMessage;
         }
     }
 
