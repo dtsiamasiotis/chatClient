@@ -31,7 +31,21 @@
         ctrl.socket.onmessage = function (evt) {
             try {
                 var jsonObject = JSON.parse(evt.data);
-
+                console.log(evt.data);
+                    if(jsonObject["operation"]==="registrationAnswer")
+                    {
+                        var content = jsonObject["content"];
+                        if(content === "nickname_taken")
+                        {
+                            $scope.statusOfClient = "NickName in use. Choose an other one!";
+                            $scope.$apply();
+                        }
+                        else
+                        {
+                            $scope.statusOfClient = "Connected!";
+                            $scope.$apply();
+                        }
+                    }
                     if(jsonObject["operation"]==="listOfClients")
                     {
                         $scope.onlineUsers=[];
@@ -47,7 +61,7 @@
                     {
                         var sender = jsonObject["sender"];
                         var destination = jsonObject["destination"];
-                        var content = jsonObject["content"]
+                        var content = jsonObject["content"];
                         console.log(jsonObject);
                         ctrl.populateChatMessages(sender,destination,content);
                         console.log(ctrl.tabs);
@@ -92,8 +106,7 @@
         ctrl.setClientName = function (clientName) {
             if(clientName) {
                 ctrl.clientName = clientName;
-                $scope.statusOfClient = "Connected!";
-                var jsonMessage = ctrl.buildJsonMessage(ctrl.clientName,"setNickname");
+                var jsonMessage = ctrl.buildJsonMessage(ctrl.clientName,"registerClient");
                 ctrl.socket.send(jsonMessage);
             }
             else
@@ -132,6 +145,12 @@
         ctrl.addMessageToTextarea = function (message){
             ctrl.tabs[ctrl.activeTabIndex].chatMessages = ctrl.tabs[ctrl.activeTabIndex].chatMessages + ctrl.clientName + ":" + message + '\n';
         }
+
+        window.onbeforeunload = function (event) {
+            var jsonMessage = ctrl.buildJsonMessage("","removeClient");
+            ctrl.socket.send(jsonMessage);
+        }
+
     }
 
 })();
