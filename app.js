@@ -20,7 +20,9 @@
 
 
         ctrl.sendMessage = function (message) {
-            ctrl.addMessageToTextarea(message);
+            if(ctrl.activeTabIndex!=0)
+                ctrl.addMessageToTextarea(message);
+
             var jsonMessage = ctrl.buildJsonMessage(message,"sendMessage");
             ctrl.socket.send(jsonMessage);
         };
@@ -62,6 +64,7 @@
             if(destination=="Main")
             {
                 ctrl.tabs[0].chatMessages = ctrl.tabs[0].chatMessages + sender + ":" + incomingMessage + '\n';
+                foundTab = true;
                 $scope.$apply();
             }
             else {
