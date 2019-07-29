@@ -31,7 +31,7 @@
         ctrl.socket.onmessage = function (evt) {
             try {
                 var jsonObject = JSON.parse(evt.data);
-                console.log(evt.data);
+
                     if(jsonObject["operation"]==="registrationAnswer")
                     {
                         var content = jsonObject["content"];
@@ -62,9 +62,7 @@
                         var sender = jsonObject["sender"];
                         var destination = jsonObject["destination"];
                         var content = jsonObject["content"];
-                        console.log(jsonObject);
                         ctrl.populateChatMessages(sender,destination,content);
-                        console.log(ctrl.tabs);
                     }
 
                 return;
@@ -85,19 +83,16 @@
                 ctrl.tabs.forEach(function (key) {
                     if (key.title === sender) {
                         key.chatMessages = key.chatMessages + sender + ":" + incomingMessage + '\n';
-                        console.log("vrike");
                         foundTab = true;
                         $scope.$apply();
                     }
 
                 });
             }
-            console.log(foundTab);
+
             if(!foundTab)
             {
-                console.log("mpike");
                 ctrl.initiatePrivateChat(sender,incomingMessage);
-                console.log(ctrl.tabs);
                 $scope.$apply();
             }
 
@@ -121,7 +116,6 @@
 
         ctrl.initiatePrivateChat = function(title,message){
             var newTab = {title:title, chatMessages:title + ":" + message + '\n'};
-            console.log(newTab);
             ctrl.tabs.push(newTab);
         }
 

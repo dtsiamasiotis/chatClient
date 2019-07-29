@@ -35,7 +35,8 @@
              <div class="form-group col-md-8">
                  <uib-tabset active="active">
                      <uib-tab index="$index+1" ng-repeat="tab in chatController.tabs" heading="{{tab.title}}" disable="tab.disabled" select="chatController.setActiveTab($index)">
-                         <textarea rows="8"
+                         <textarea style="resize:none"
+                                   rows="8"
                                    class="form-control"
                                    ng-model="tab.chatMessages"></textarea>
 
@@ -44,7 +45,7 @@
 
                </div>
              <div class="form-group col-md-4">
-             <select size="8" ng-model="users" ng-options="u.nickName for u in onlineUsers" ng-dblclick="chatController.selectForPrivate()">
+             <select size="13" style="width: 350px;" ng-model="users" ng-options="u.nickName for u in onlineUsers" ng-dblclick="chatController.selectForPrivate()">
                  <option value="" selected hidden/>
              </select>
              </div>
