@@ -25,6 +25,7 @@
 
             var jsonMessage = ctrl.buildJsonMessage(message,"sendMessage");
             ctrl.socket.send(jsonMessage);
+            $scope.message = '';
         };
 
 
